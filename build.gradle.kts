@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("com.gradleup.shadow") version "8.3.0"
 }
 
 group = "club.tesseract.limbo"
@@ -24,6 +25,29 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.34")
 }
 
-tasks.test {
-    useJUnitPlatform()
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+tasks {
+    jar {
+        manifest {
+            attributes["Main-Class"] = "$group.EntryPoint"
+        }
+    }
+
+    build {
+        dependsOn(shadowJar)
+    }
+
+    shadowJar {
+        mergeServiceFiles()
+        archiveClassifier.set("")
+    }
+
+    test {
+        useJUnitPlatform()
+    }
 }
