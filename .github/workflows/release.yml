@@ -57,11 +57,11 @@ jobs:
           name: shadow-jar
           path: build/libs
 
-      - name: Extract Java version
+      - name: Extract version from build.gradle
         id: java-version
         run: |
-          java -version 2>&1 | grep version | awk -F '"' '{print $2}' > java_version.txt
-          echo "::set-output name=version::$(cat java_version.txt)"
+            echo ::set-output name=version::$(grep -oP 'version = "\K[^"]+' build.gradle)
+        shell: bash
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
