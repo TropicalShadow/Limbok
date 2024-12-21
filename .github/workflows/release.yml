@@ -41,6 +41,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
 
+    outputs:
+      version: ${{ steps.java-version.outputs.version }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -80,12 +83,13 @@ jobs:
         if: ${{ success() }}
         run: |
           curl -H "Content-Type: application/json" -X POST -d '{
-            "content": "✅ Build and release succeeded for version: ${{ needs.release.outputs.version }}"
+            "content": "✅ Build and release succeeded for version: v${{ needs.release.outputs.version }}\nCheck it out here: https://github.com/${{ github.repository }}/releases/tag/v${{ needs.release.outputs.version }}"
           }' ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Send Discord Webhook for Failure
         if: ${{ failure() }}
         run: |
           curl -H "Content-Type: application/json" -X POST -d '{
-            "content": "❌ Build or release failed. Please check the logs."
+            "content": "❌ Build or release failed. Please check the logs. https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           }' ${{ secrets.DISCORD_WEBHOOK_URL }}
+
