@@ -60,10 +60,10 @@ jobs:
           name: shadow-jar
           path: build/libs
 
-      - name: Extract version from build.gradle
+      - name: Extract version from build.gradle.kts
         id: java-version
         run: |
-            echo ::set-output name=version::$(grep -oP 'version = "\K[^"]+' build.gradle)
+            echo ::set-output name=version::$(grep -oP '(?<=version = ").*(?=")' build.gradle.kts)
         shell: bash
 
       - name: Create GitHub Release
