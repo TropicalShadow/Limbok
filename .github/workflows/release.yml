@@ -55,6 +55,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: shadow-jar
+          path: build/libs
 
       - name: Extract Java version
         id: java-version
