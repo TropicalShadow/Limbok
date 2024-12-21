@@ -1,0 +1,90 @@
+name: Build and Release with ShadowJar
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build with ShadowJar
+        run: ./gradlew shadowJar
+
+      - name: Upload ShadowJar artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: shadow-jar
+          path: build/libs/*.jar
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: Get ShadowJar artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: shadow-jar
+
+      - name: Extract Java version
+        id: java-version
+        run: |
+          java -version 2>&1 | grep version | awk -F '"' '{print $2}' > java_version.txt
+          echo "::set-output name=version::$(cat java_version.txt)"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/libs/*.jar
+          name: "v${{ steps.java-version.outputs.version }}"
+          release_name: Release v${{ steps.java-version.outputs.version }}
+          generate_release_notes: true
+
+  notify:
+    needs: [build, release]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord Webhook for Success
+        if: ${{ success() }}
+        run: |
+          curl -H "Content-Type: application/json" -X POST -d '{
+            "content": "✅ Build and release succeeded for version: ${{ needs.release.outputs.version }}"
+          }' ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Send Discord Webhook for Failure
+        if: ${{ failure() }}
+        run: |
+          curl -H "Content-Type: application/json" -X POST -d '{
+            "content": "❌ Build or release failed. Please check the logs."
+          }' ${{ secrets.DISCORD_WEBHOOK_URL }}
