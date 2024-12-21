@@ -7,13 +7,7 @@ import club.tesseract.limbo.properties.ServerProperties;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.entity.Player;
-import net.minestom.server.event.GlobalEventHandler;
-import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
-import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.instance.*;
-import net.minestom.server.instance.block.Block;
-import net.minestom.server.coordinate.Pos;
 import net.minestom.server.instance.block.BlockManager;
 
 import java.io.File;

@@ -5,7 +5,7 @@
 
 ## Features
 - [x] Version Support
-  - [x] 1.21.1
+  - [x] 1.21.3
 - [x] Proxy Support
   - [x] BungeeCord
   - [x] Velocity

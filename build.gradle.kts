@@ -14,7 +14,7 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
-    implementation("net.minestom:minestom-snapshots:9fbff439e7")
+    implementation("net.minestom:minestom-snapshots:7b659f0fc3")
     implementation("dev.hollowcube:schem:1.2.0")
 
     // logging (logback)
