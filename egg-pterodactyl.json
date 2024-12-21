@@ -1,0 +1,41 @@
+{
+  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": "2024-12-20T23:50:00+00:00",
+  "name": "Limbok",
+  "author": "me@tesseract.club",
+  "description": "Minecraft minimum server software (aka Limbo)",
+  "features": null,
+  "docker_images": {
+    "Java 21": "ghcr.io\/pterodactyl\/yolks:java_21"
+  },
+  "file_denylist": [],
+  "startup": "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}",
+  "config": {
+    "files": "{\r\n    \"server.properties\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"server-ip\": \"0.0.0.0\",\r\n            \"server-port\": \"{{server.build.default.port}}\"\r\n        }\r\n    }\r\n}",
+    "startup": "{\r\n    \"done\": \"Starting server on \"\r\n}",
+    "logs": "{}",
+    "stop": "stop"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!\/bin\/ash\r\n# Limbok Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\nmkdir -p \/mnt\/server\r\n\r\ncd \/mnt\/server || exit\r\n\r\nif [ ! -f server.properties ]; then\r\n    echo \"Downloading Limbok server.properties\"\r\n    curl -o server.properties https:\/\/raw.githubusercontent.com\/TropicalShadow\/Limbok\/main\/src\/main\/resources\/server.properties\r\nfi",
+      "container": "ghcr.io\/parkervcp\/installers:alpine",
+      "entrypoint": "ash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Server Jar File",
+      "description": "The name of the server jarfile to run the server with.",
+      "env_variable": "SERVER_JARFILE",
+      "default_value": "server.jar",
+      "user_viewable": true,
+      "user_editable": false,
+      "rules": "required|regex:\/^([\\w\\d._-]+)(\\.jar)$\/"
+    }
+  ]
+}
